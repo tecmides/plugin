@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="report/tecmides/db" VERSION="20171124" COMMENT="XMLDB file for Moodle report/tecmides">
+  <TABLES>
+    <TABLE NAME="report_tecmides_info" COMMENT="Necessary from-moodle data for information extraction">
+      <FIELDS>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="grade" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="q_assign_view" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="q_assign_submit" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="q_forum_create" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="q_forum_group_access" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="q_forum_discussion_access" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="q_resource_view" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="moment" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="report_tecmides_info_pk" TYPE="primary" FIELDS="courseid,userid" />
+        <KEY NAME="report_tecmides_info_fk_courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" />
+        <KEY NAME="report_tecmides_info_fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
+    
+    <TABLE NAME="report_tecmides_questionary" COMMENT="Questionary answers">
+      <FIELDS>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="st_indiv_assign_ltsubmit" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="st_group_assign_ltsubmit" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="st_indiv_subject_diff" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="rc_indiv_assign_ltsubmit" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="rc_group_assign_ltsubmit" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="rc_indiv_subject_keepup" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="rc_indiv_subject_diff" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="moment" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="report_tecmides_questionary_pk" TYPE="primary" FIELDS="courseid,userid" />
+        <KEY NAME="report_tecmides_questionary_fk_courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" />
+        <KEY NAME="report_tecmides_questionary_fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
+    
+  </TABLES>
+</XMLDB>

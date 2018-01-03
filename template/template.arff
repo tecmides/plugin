@@ -1,0 +1,18 @@
+@RELATION tecmides
+
+@ATTRIBUTE grade                     {A,B,C,D,E,F}
+@ATTRIBUTE q_assign_view             {0,1,2,3}
+@ATTRIBUTE q_assign_submit           {0,1,2,3}
+@ATTRIBUTE q_forum_create            {0,1,2,3}
+@ATTRIBUTE q_forum_group_access      {0,1,2,3}
+@ATTRIBUTE q_forum_discussion_access {0,1,2,3}
+@ATTRIBUTE q_resource_view           {0,1,2,3}
+@ATTRIBUTE st_indiv_assign_ltsubmit  {0,1,2,3,4,5}
+@ATTRIBUTE st_group_assign_ltsubmit  {0,1,2,3,4,5}
+@ATTRIBUTE st_indiv_subject_diff     {0,1,2,3,4,5}
+@ATTRIBUTE rc_indiv_assign_ltsubmit  {0,1,2,3,4}
+@ATTRIBUTE rc_group_assign_ltsubmit  {0,1,2,3,4}
+@ATTRIBUTE rc_indiv_subject_keepup   {0,1,2,3,4}
+@ATTRIBUTE rc_indiv_subject_diff     {0,1,2,3,4}
+
+@DATA
