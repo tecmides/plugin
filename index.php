@@ -50,11 +50,46 @@ $arffString = generate_arff();
 $tecmidesWsdl = "http://127.0.0.1:9876/?wsdl";
 $tecmidesClient = new SoapClient($tecmidesWsdl);
 
-$rules = convert_json($tecmidesClient->generateRules($arffString));
+$result = convert_json($tecmidesClient->generateRules($arffString));
 
-var_dump($rules);
+display_rules($result->rules);
 
 echo $OUTPUT->footer();
+
+function display_rules($rules) {
+    echo "--- ASSIGN ---";
+    echo "<br/>";
+    
+    foreach($rules->assign as $rule) {
+        echo "If " . implode(" & ", $rule->antecedent) . ", then " . implode(" & ", $rule->consequent);
+        echo "<br/>";
+        echo "[confidence: '{$rule->confidence}', lift: '{$rule->lift}', conviction: '{$rule->conviction}']";
+        echo "<br/>";
+        echo "<br/>";
+    }
+    
+    echo "--- FORUM ---";
+    echo "<br/>";
+    
+    foreach($rules->forum as $rule) {
+        echo "If " . implode(" & ", $rule->antecedent) . ", then " . implode(" & ", $rule->consequent);
+        echo "<br/>";
+        echo "[confidence: '{$rule->confidence}', lift: '{$rule->lift}', conviction: '{$rule->conviction}']";
+        echo "<br/>";
+        echo "<br/>";
+    }
+    
+    echo "--- RESOURCE ---";
+    echo "<br/>";
+    
+    foreach($rules->resource as $rule) {
+        echo "If " . implode(" & ", $rule->antecedent) . ", then " . implode(" & ", $rule->consequent);
+        echo "<br/>";
+        echo "[confidence: '{$rule->confidence}', lift: '{$rule->lift}', conviction: '{$rule->conviction}']";
+        echo "<br/>";
+        echo "<br/>";
+    }
+}
 
 function convert_json($json) {
     $mining = json_decode($json);
@@ -64,12 +99,6 @@ function convert_json($json) {
     
         foreach($prop as $p) {
             $mining->$p = convert_json($mining->$p);
-        }
-    }
-    else
-    {
-        for($i = 0; $i < count($mining); $i++) {
-            $mining[$i] = trim($mining[$i]);
         }
     }
     
