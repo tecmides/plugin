@@ -11,6 +11,10 @@
     $string['selectrules'] = "Selects the rules for each module to be applied";
     $string['norules'] = "No rules available for this module";
     $string['updaterules'] = "Update rules";
+    $string['discouragedstudents'] = "Discouraged students";
+    $string['notdiscouragedstudents'] = "Not-discouraged students";
+    $string['discouragedstudentscomplete'] = "Potentially discouraged students";
+    $string['emptydiscouragedlistmessage'] = "There are no pottentialy discouraged stufents";
     
     // Fields
     $string["grade"] = "Grade";
@@ -48,3 +52,6 @@
     $string['quartile1'] = "Medium";
     $string['quartile2'] = "Medium-high";
     $string['quartile3'] = "High";
+        
+    // Errors
+    $string['soaperror'] = "Error when trying to connect with the mining server. Please, try again later.";

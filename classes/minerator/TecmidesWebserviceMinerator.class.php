@@ -1,8 +1,6 @@
 <?php
 
 require_once(__DIR__ . "/Minerator.php");
-require_once(__DIR__ . "/../db/Activity.class.php");
-require_once(__DIR__ . "/../db/Profile.class.php");
 
 class TecmidesWebserviceMinerator implements Minerator
 {
@@ -15,77 +13,54 @@ class TecmidesWebserviceMinerator implements Minerator
 
     }
 
-    public function generateRules()
+    public function generateRules( $data, $header )
     {
-        $arffString = $this->generateARFF();
+        $arffString = $this->generateARFF($data, $header);
 
         return $this->convertJSON($this->client->generateRules($arffString));
 
     }
 
-    private function generateARFF()
+    private function generateARFF( $data, $header )
     {
-        $header = $this->getHeader();
-        $data = $this->getDataSection();
+        $strHeader = $this->convertToHeaderSection($header);
+        $strData = $this->convertToDataSection($data, $header);
 
-        return $header . $data;
+        return $strHeader . $strData;
 
     }
 
-    private function getHeader()
+    private function convertToHeaderSection( $header )
     {
-        return "@RELATION tecmides
+        $strHeader = "@RELATION tecmides\n";
 
-                @ATTRIBUTE grade                     {A,B,C,D,E,F}
-                @ATTRIBUTE q_assign_view             {0,1,2,3}
-                @ATTRIBUTE q_assign_submit           {0,1,2,3}
-                @ATTRIBUTE q_forum_create            {0,1,2,3}
-                @ATTRIBUTE q_forum_group_access      {0,1,2,3}
-                @ATTRIBUTE q_forum_discussion_access {0,1,2,3}
-                @ATTRIBUTE q_resource_view           {0,1,2,3}
-                @ATTRIBUTE st_indiv_assign_ltsubmit  {0,1,2,3,4,5}
-                @ATTRIBUTE st_group_assign_ltsubmit  {0,1,2,3,4,5}
-                @ATTRIBUTE st_indiv_subject_diff     {0,1,2,3,4,5}
-                @ATTRIBUTE rc_indiv_assign_ltsubmit  {0,1,2,3,4}
-                @ATTRIBUTE rc_group_assign_ltsubmit  {0,1,2,3,4}
-                @ATTRIBUTE rc_indiv_subject_keepup   {0,1,2,3,4}
-                @ATTRIBUTE rc_indiv_subject_diff     {0,1,2,3,4}
+        foreach ( $header as $key => $item )
+        {
+            $strHeader .= "@ATTRIBUTE {$key} {{$item}}\n";
+        }
 
-                @DATA
-                ";
+        return $strHeader;
+
     }
 
-    private function getDataSection()
+    private function convertToDataSection( $data, $header )
     {
-        global $DB;
+        $strData = "@DATA\n";
 
-        $ignoreColumns = [ "id", "courseid", "userid", "timecreated", "timemodified" ];
-
-        $infoColumns = array_diff(Activity::getAttributes(), $ignoreColumns);
-        $questionaryColumns = array_diff(Profile::getAttributes(), $ignoreColumns);
-
-        $columns = array_merge($infoColumns, $questionaryColumns);
-
-        $sql = sprintf("SELECT i.userid, %s FROM %s as i INNER JOIN %s as q ON i.courseid = q.courseid AND i.userid = q.userid", implode(",", $infoColumns) . "," . implode(",", $questionaryColumns), ACTIVITY_TABLE, PROFILE_TABLE);
-
-        $users = $DB->get_records_sql($sql);
-
-        $data = "";
-
-        foreach ( $users as $user )
+        foreach ( $data as $item )
         {
             $info = [];
-
-            foreach ( $columns as $column )
+            
+            foreach ( array_keys($header) as $column )
             {
-                $info[] = $user->$column;
+                $info[] = $item->$column;
             }
 
             // Substitui o '-' por '?'
-            $data .= str_replace("-", "?", implode(",", $info)) . "\n";
+            $strData .= str_replace("-", "?", implode(",", $info)) . "\n";
         }
 
-        return $data;
+        return $strData;
 
     }
 

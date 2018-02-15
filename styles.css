@@ -1,0 +1,64 @@
+.chart-parent {
+    position: relative;
+
+    max-width: 100%;
+    height: auto;
+}
+
+.chart-title {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10px;
+
+    font-size: 20px;
+    font-weight: 400;
+    color: #000;
+
+    text-align: center;
+}
+.chart-subtitle {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10px;
+
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+
+    text-align: center;
+}
+
+.chart-container {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    max-width: 100%;
+    height: auto;
+
+    background: transparent;
+}
+
+.chart {
+    position: relative;
+
+    max-width: 100%;
+    height: auto;
+}
+
+.dangerous {
+    background: rgba(255,87,87,1);
+    background: -moz-linear-gradient(top, rgba(255,87,87,1) 0%, rgba(87,87,255,1) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,87,87,1)), color-stop(100%, rgba(87,87,255,1)));
+    background: -webkit-linear-gradient(top, rgba(255,87,87,1) 0%, rgba(87,87,255,1) 100%);
+    background: -o-linear-gradient(top, rgba(255,87,87,1) 0%, rgba(87,87,255,1) 100%);
+    background: -ms-linear-gradient(top, rgba(255,87,87,1) 0%, rgba(87,87,255,1) 100%);
+    background: linear-gradient(to bottom, rgba(255,87,87,1) 0%, rgba(87,87,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff5757', endColorstr='#5757ff', GradientType=0 );
+
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color:transparent;
+}

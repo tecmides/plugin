@@ -11,6 +11,10 @@
     $string['norules'] = "Não há regras disponíveis para esse módulo";
     $string['applyrules'] = "Aplicar regras";
     $string['updaterules'] = "Atualizar regras";
+    $string['discouragedstudents'] = "Alunos desanimados";
+    $string['notdiscouragedstudents'] = "Alunos não-desanimados";
+    $string['discouragedstudentscomplete'] = "Alunos com potencial desânimo no curso";
+    $string['emptydiscouragedlistmessage'] = "Não há alunos com potencial desânimo no curso";
     
     // Fields
     $string["grade"] = "Nota";
@@ -48,3 +52,6 @@
     $string['quartile1'] = "Médio";
     $string['quartile2'] = "Médio-alto";
     $string['quartile3'] = "Alto";
+    
+    // Errors
+    $string['soaperror'] = "Erro ao se conectar ao servidor de mineração. Por favor, tente novamente mais tarde.";

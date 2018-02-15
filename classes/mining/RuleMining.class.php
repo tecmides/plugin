@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__ . "/Mining.php");
+require_once(__DIR__ . "/../db/Activity.class.php");
 require_once(__DIR__ . "/../db/Profile.class.php");
 
 class RuleMining implements Mining
@@ -8,7 +9,7 @@ class RuleMining implements Mining
 
     public function getMatchingStudents( $courseid, $minerator )
     {
-        $rules = $minerator->generateRules();
+        $rules = $minerator->generateRules($this->getData(), $this->getHeader());
         $students = $this->getStudents($courseid);
         
         foreach($students as $student) {
@@ -27,6 +28,46 @@ class RuleMining implements Mining
 
         return $students;
 
+    }
+    
+    private function getData()
+    {
+        global $DB;
+
+        $ignoreColumns = [ "id", "courseid", "userid", "timecreated", "timemodified" ];
+
+        $infoColumns = array_diff(Activity::getAttributes(), $ignoreColumns);
+        $questionaryColumns = array_diff(Profile::getAttributes(), $ignoreColumns);
+
+        $sql = sprintf("SELECT i.userid, %s FROM %s as i INNER JOIN %s as q ON i.courseid = q.courseid AND i.userid = q.userid", implode(",", $infoColumns) . "," . implode(",", $questionaryColumns), ACTIVITY_TABLE, PROFILE_TABLE);
+
+        $users = $DB->get_records_sql($sql);
+        
+        return array_values($users);
+    }
+    
+    private function getHeader()
+    {
+        $quartileRange = "0,1,2,3";
+        $mindstateRange = "0,1,2,3,4,5";
+        $recurrenceRange = "0,1,2,3,4";
+        
+        return [
+            "grade" => "A,B,C,D,E,F",
+            "q_assign_view" => $quartileRange,
+            "q_assign_submit" => $quartileRange,
+            "q_forum_create" => $quartileRange,
+            "q_forum_group_access" => $quartileRange,
+            "q_forum_discussion_access" => $quartileRange,
+            "q_resource_view" => $quartileRange,
+            "st_indiv_assign_ltsubmit" => $mindstateRange,
+            "st_group_assign_ltsubmit" => $mindstateRange,
+            "st_indiv_subject_diff" => $mindstateRange,
+            "rc_indiv_assign_ltsubmit" => $recurrenceRange,
+            "rc_group_assign_ltsubmit" => $recurrenceRange,
+            "rc_indiv_subject_keepup" => $recurrenceRange,
+            "rc_indiv_subject_diff" => $recurrenceRange,
+        ];
     }
 
     private function getStudents( $courseid )
