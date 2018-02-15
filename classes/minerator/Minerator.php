@@ -2,5 +2,5 @@
 
 interface Minerator
 {
-    public function generateRules();
+    public function generateRules($data, $header = "");
 }
