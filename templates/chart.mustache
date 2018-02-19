@@ -1,0 +1,36 @@
+<div id="{{ id }}" class="dashboard chart-parent" style="{{ inlineStyle }}">
+    <h3 class="dashboard-title">{{ title }}</h3>
+    <h6 class="dashboard-subtitle">{{ subtitle }}</h6>
+    
+    <div class="chart-container">
+        <canvas class="chart"></canvas>
+    </div>
+</div>
+
+{{#js}}
+(function() {
+    let sets = {{{ datasets }}}
+
+    sets.forEach(function(item, index) {
+        if(item.backgroundColor.length === 0) {
+            let colors = palette('tol-rainbow', sets[index].data.length);
+
+            colors.forEach(function(color, i) {
+                colors[i] = "#" + colors[i];
+            });
+
+            sets[index].backgroundColor = colors;
+        }
+    });
+
+    Chart.defaults.global.defaultFontColor = '#000';
+    new Chart(document.querySelector("#{{ id }} canvas"), {
+        type: {{{ type }}},
+        data:
+        {
+            labels: {{{ labels }}},
+            datasets: sets,
+        },
+    });
+})();
+{{/js}}

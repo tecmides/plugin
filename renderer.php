@@ -15,28 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Capabilities
- *
- * This files lists capabilites related to report_logline
- *
- * @package    report_loglive
- * @copyright  2011 Petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$capabilities = array(
-    'report/tecmides:view' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-    ),
-);
+class report_tecmides_renderer extends plugin_renderer_base
+{
 
+    /**
+     * Defer to template
+     *
+     * @param dashboard $dashboard
+     * @return string html for the page
+     */
+    public function render_dashboard( \tecmides\output\dashboard $dashboard )
+    {
+        $data = $dashboard->export_for_template($this);
+        $template = $dashboard->get_template_name();
 
+        return parent::render_from_template("report_tecmides/{$template}", $data);
+
+    }
+
+}

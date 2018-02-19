@@ -1,9 +1,8 @@
 <?php
 
-require_once(__DIR__ . "/BaseActiveRecord.class.php");
-
-class Profile extends BaseActiveRecord
+class domain_profile extends domain_base_active_record
 {
+
     public $id;
     public $courseid;
     public $userid;
@@ -15,14 +14,14 @@ class Profile extends BaseActiveRecord
     public $rc_indiv_subject_keepup;
     public $rc_indiv_subject_diff;
     public $timecreated;
-    
-    public static function getTableName()
+
+    public static function get_table_name()
     {
         return "tecmides_profile";
 
     }
 
-    public static function getPrimaryKey()
+    public static function get_primary_key()
     {
         return "id";
 

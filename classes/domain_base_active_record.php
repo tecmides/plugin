@@ -1,13 +1,13 @@
 <?php
 
-require(__DIR__ . "/ActiveRecord.php");
+require_once(__DIR__ . "/domain_active_record.php");
 
-abstract class BaseActiveRecord implements ActiveRecord
+abstract class domain_base_active_record implements domain_active_record
 {
 
-    private $__isNewRecord = true;
+    private $__is_new_record = true;
 
-    public static function getAttributes()
+    public static function get_attributes()
     {
         $attributes = array_keys(get_class_vars(get_class(new static())));
         $ignore = array_keys(get_class_vars(__CLASS__));
@@ -18,7 +18,7 @@ abstract class BaseActiveRecord implements ActiveRecord
 
     public function populate( $record )
     {
-        foreach ( static::getAttributes() as $attribute )
+        foreach ( static::get_attributes() as $attribute )
         {
             if ( isset($record->$attribute) )
             {
@@ -30,9 +30,9 @@ abstract class BaseActiveRecord implements ActiveRecord
 
     public function validate()
     {
-        foreach ( static::getAttributes() as $attribute )
+        foreach ( static::get_attributes() as $attribute )
         {
-            if ( $attribute !== static::getPrimaryKey() && is_null($this->$attribute) )
+            if ( $attribute !== static::get_primary_key() && is_null($this->$attribute) )
             {
                 return false;
             }
@@ -48,21 +48,21 @@ abstract class BaseActiveRecord implements ActiveRecord
 
         if ( $this->validate() )
         {
-            $data = $this->toStdClass();
+            $data = $this->to_stdClass();
 
-            if ( ! $this->__isNewRecord )
+            if ( ! $this->__is_new_record )
             {
-                return $DB->update_record(static::getTableName(), $data);
+                return $DB->update_record(static::get_table_name(), $data);
             }
             else
             {
-                $pk = static::getPrimaryKey();
+                $pk = static::get_primary_key();
                 unset($data->$pk);
 
-                $this->$pk = $DB->insert_record(static::getTableName(), $data, true);
-                $this->__isNewRecord = is_null($this->$pk);
+                $this->$pk = $DB->insert_record(static::get_table_name(), $data, true);
+                $this->__is_new_record = is_null($this->$pk);
 
-                return ! $this->__isNewRecord;
+                return ! $this->__is_new_record;
             }
         }
 
@@ -70,10 +70,10 @@ abstract class BaseActiveRecord implements ActiveRecord
 
     }
 
-    private function toStdClass()
+    private function to_stdClass()
     {
         $data = new stdClass();
-        $attributes = static::getAttributes();
+        $attributes = static::get_attributes();
 
         foreach ( $attributes as $attribute )
         {
@@ -88,28 +88,28 @@ abstract class BaseActiveRecord implements ActiveRecord
     {
         global $DB;
 
-        $pk = static::getPrimaryKey();
+        $pk = static::get_primary_key();
 
-        return $DB->delete_records(static::getTableName(), [ $pk => $this->$pk ]);
+        return $DB->delete_records(static::get_table_name(), [ $pk => $this->$pk ]);
 
     }
 
-    public static function findOne( $conditions )
+    public static function find_one( $conditions )
     {
         global $DB;
 
-        $row = $DB->get_record(static::getTableName(), $conditions);
-        
+        $row = $DB->get_record(static::get_table_name(), $conditions);
+
         if ( $row )
         {
             $record = new static();
 
-            foreach ( static::getAttributes() as $attribute )
+            foreach ( static::get_attributes() as $attribute )
             {
                 $record->$attribute = $row->$attribute;
             }
 
-            $record->__isNewRecord = false;
+            $record->__is_new_record = false;
 
             return $record;
         }
@@ -118,11 +118,11 @@ abstract class BaseActiveRecord implements ActiveRecord
 
     }
 
-    public static function findAll( $conditions )
+    public static function find_all( $conditions )
     {
         global $DB;
 
-        $rows = $DB->get_records(static::getTableName(), $conditions);
+        $rows = $DB->get_records(static::get_table_name(), $conditions);
 
         $records = [];
 
@@ -130,7 +130,7 @@ abstract class BaseActiveRecord implements ActiveRecord
         {
             $record = new static();
 
-            foreach ( static::getAttributes() as $attribute )
+            foreach ( static::get_attributes() as $attribute )
             {
                 $record->$attribute = $row->$attribute;
             }

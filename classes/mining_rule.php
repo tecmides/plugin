@@ -1,59 +1,71 @@
 <?php
 
-require_once(__DIR__ . "/Mining.php");
-require_once(__DIR__ . "/../db/Activity.class.php");
-require_once(__DIR__ . "/../db/Profile.class.php");
+require_once(__DIR__ . "/mining.php");
+require_once(__DIR__ . "/domain_activity.php");
+require_once(__DIR__ . "/domain_profile.php");
 
-class RuleMining implements Mining
+class mining_rule implements mining
 {
 
-    public function getMatchingStudents( $courseid, $minerator )
+    public function get_rules( minerator $minerator )
     {
-        $rules = $minerator->generateRules($this->getData(), $this->getHeader());
-        $students = $this->getStudents($courseid);
-        
-        foreach($students as $student) {
+        return $minerator->generate_rules($this->get_mining_data(), $this->get_mining_data_header());
+
+    }
+
+    public function get_matching_students( $courseid, $rules )
+    {
+        $students = $this->get_students($courseid);
+
+        foreach ( $students as $student )
+        {
             $student->matches = [];
         }
-        
+
         foreach ( $rules as $rule )
         {
-            $matchingStudents = $this->queryRule($rule, $courseid);
+            $matchingStudents = $this->query_rule($rule, $courseid);
 
             foreach ( $matchingStudents as $userid )
             {
-                $students[$userid]->matches[] = $this->beautifyRule($rule);
+                $students[$userid]->matches[] = $this->beautify_rule($rule);
             }
         }
 
         return $students;
 
     }
-    
-    private function getData()
+
+    private function get_mining_data()
     {
         global $DB;
 
-        $ignoreColumns = [ "id", "courseid", "userid", "timecreated", "timemodified" ];
-
-        $infoColumns = array_diff(Activity::getAttributes(), $ignoreColumns);
-        $questionaryColumns = array_diff(Profile::getAttributes(), $ignoreColumns);
-
-        $sql = sprintf("SELECT i.userid, %s FROM %s as i INNER JOIN %s as q ON i.courseid = q.courseid AND i.userid = q.userid", implode(",", $infoColumns) . "," . implode(",", $questionaryColumns), ACTIVITY_TABLE, PROFILE_TABLE);
+        $sql = sprintf("SELECT i.userid, %s FROM %s as i INNER JOIN %s as q ON i.courseid = q.courseid AND i.userid = q.userid", implode(",", self::get_mining_attributes()), ACTIVITY_TABLE, PROFILE_TABLE);
 
         $users = $DB->get_records_sql($sql);
-        
+
         return array_values($users);
+
     }
-    
-    private function getHeader()
+
+    public static function get_mining_attributes()
     {
-        $quartileRange = "0,1,2,3";
-        $mindstateRange = "0,1,2,3,4,5";
-        $recurrenceRange = "0,1,2,3,4";
-        
+        $ignoreColumns = [ "id", "courseid", "userid", "timecreated", "timemodified" ];
+        $activityColumns = array_diff(domain_activity::get_attributes(), $ignoreColumns);
+        $profileColumns = array_diff(domain_profile::get_attributes(), $ignoreColumns);
+
+        return array_merge($activityColumns, $profileColumns);
+
+    }
+
+    private function get_mining_data_header()
+    {
+        $quartileRange = [ "0", "1", "2", "3" ];
+        $mindstateRange = [ "0", "1", "2", "3", "4", "5" ];
+        $recurrenceRange = [ "0", "1", "2", "3", "4" ];
+
         return [
-            "grade" => "A,B,C,D,E,F",
+            "grade" => [ "A", "B", "C", "D", "E", "F" ],
             "q_assign_view" => $quartileRange,
             "q_assign_submit" => $quartileRange,
             "q_forum_create" => $quartileRange,
@@ -68,13 +80,14 @@ class RuleMining implements Mining
             "rc_indiv_subject_keepup" => $recurrenceRange,
             "rc_indiv_subject_diff" => $recurrenceRange,
         ];
+
     }
 
-    private function getStudents( $courseid )
+    private function get_students( $courseid )
     {
         global $DB;
 
-        $profiles = Profile::findAll([ "courseid" => $courseid ]);
+        $profiles = domain_profile::find_all([ "courseid" => $courseid ]);
 
         $users = [];
 
@@ -87,7 +100,7 @@ class RuleMining implements Mining
 
     }
 
-    private function queryRule( $rule, $courseid )
+    private function query_rule( $rule, $courseid )
     {
         global $DB;
 
@@ -108,30 +121,30 @@ class RuleMining implements Mining
 
         $sql = sprintf("SELECT i.userid FROM %s as i INNER JOIN %s as q ON i.courseid = q.courseid AND i.userid = q.userid WHERE i.courseid=? AND %s", ACTIVITY_TABLE, PROFILE_TABLE, $where);
 
-        return array_keys($DB->get_records_sql($sql, [$courseid]));
+        return array_keys($DB->get_records_sql($sql, [ $courseid ]));
 
     }
-    
-    private function beautifyRule($rule)
+
+    private function beautify_rule( $rule )
     {
         $beautifiedAntecedents = [];
         $beautifiedConsequents = [];
 
         foreach ( $rule->antecedent as $item )
         {
-            $beautifiedAntecedents[] = $this->beautifyRuleTerm($item);
+            $beautifiedAntecedents[] = $this->beautify_rule_term($item);
         }
 
         foreach ( $rule->consequent as $item )
         {
-            $beautifiedConsequents[] = $this->beautifyRuleTerm($item);
+            $beautifiedConsequents[] = $this->beautify_rule_term($item);
         }
 
         return sprintf(get_string("ruleformat", "report_tecmides"), implode(" e ", $beautifiedAntecedents), implode(" e ", $beautifiedConsequents));
 
     }
-    
-    private function beautifyRuleTerm( $item )
+
+    private function beautify_rule_term( $item )
     {
         $operand = $item->name;
         $value = $item->value;

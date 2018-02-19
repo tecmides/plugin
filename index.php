@@ -1,12 +1,17 @@
 <?php
 
-require(__DIR__ . '/../../config.php');
-require(__DIR__ . '/lib.php');
-require(__DIR__ . '/constants.php');
+require(__DIR__ . "/../../config.php");
+require(__DIR__ . "/lib.php");
+require(__DIR__ . "/constants.php");
+require(__DIR__ . "/classes/domain_activity.php");
+require(__DIR__ . "/classes/minerator_tecmideswebservice.php");
+require(__DIR__ . "/classes/mining_rule.php");
+require(__DIR__ . '/classes/analysis_for_students.php');
+require(__DIR__ . '/classes/output/chart.php');
+require(__DIR__ . '/classes/output/itemlist.php');
 
-require(__DIR__ . "/classes/minerator/TecmidesWebserviceMinerator.class.php");
-require(__DIR__ . '/classes/mining/RuleMining.class.php');
-require(__DIR__ . '/classes/presentation/Chart.class.php');
+use \tecmides\output\chart;
+use \tecmides\output\itemlist;
 
 global $DB;
 
@@ -28,132 +33,121 @@ $PAGE->set_title(get_string('pluginname', 'report_tecmides'));
 $PAGE->set_url($url->out());
 $PAGE->set_pagelayout('report');
 
-echo $OUTPUT->header();
+$output = $PAGE->get_renderer('report_tecmides');
 
-Activity::import($course->id);
+echo $output->header();
 
-$charts = [];
-$discouragedStudentsList = [];
+domain_activity::import($course->id);
 
-try
+$tecmidesMinerator = new minerator_tecmideswebservice();
+
+$mining = new mining_rule();
+$rules = $mining->get_rules($tecmidesMinerator);
+$students = $mining->get_matching_students($course->id, $rules);
+$analysis_students = new analysis_for_students($students);
+
+echo $output->render_dashboard(generateDiscouragedStudentsChart($analysis_students));
+echo $output->render_dashboard(generateStudentsList($analysis_students));
+echo $output->render_dashboard(generateParameterImpactChart($rules));
+
+function generateDiscouragedStudentsChart( analysis_for_students $analysis_students )
 {
-    $tecmidesMinerator = new TecmidesWebserviceMinerator();
-}
-catch ( Exception $ex )
-{
-    \core\notification::error(get_string("soaperror", "report_tecmides"));
-}
+    $data = [ $analysis_students->count_discouraged_students(), count($analysis_students->get_students()) - $analysis_students->count_discouraged_students() ];
 
-if ( $tecmidesMinerator )
-{
-    $mining = new RuleMining();
-    $students = $mining->getMatchingStudents($course->id, $tecmidesMinerator);
-
-    $charts[] = generateDiscouragedStudentsChart($students);
-
-    $discouragedStudentsList["title"] = get_string("discouragedstudentscomplete", "report_tecmides");
-    $discouragedStudentsList["items"] = getDiscouragedStudentsItems($students);
-    $discouragedStudentsList["emptyMessage"] = get_string("emptydiscouragedlistmessage", "report_tecmides");
-}
-
-function generateDiscouragedStudentsChart( $students )
-{
-    $discouragedStudents = new Chart("discouragedStudents", get_string("discouragedstudents", "report_tecmides"), get_string("discouragedstudentscomplete", "report_tecmides"));
-    $discouragedStudents->setType("pie");
-    $discouragedStudents->setLabels([
+    $chart = new chart("discouragedStudents", get_string("discouragedstudents", "report_tecmides"), get_string("discouragedstudentscomplete", "report_tecmides"));
+    $chart->type = "pie";
+    $chart->labels = [
         get_string("discouragedstudents", "report_tecmides"),
         get_string("notdiscouragedstudents", "report_tecmides")
-    ]);
-    $discouragedStudents->setStyle([
-        "display" => "block",
-        "width" => "90%",
-        "height" => "auto",
-        "margin" => "0 auto",
-        "maxWidth" => "800px"
-    ]);
+    ];
 
-    $datasets = [];
+    $chart->add_style("width", "60%");
+    $chart->add_style("float", "left");
 
-    $datasets[] = Chart::generateDataset("# de alunos desanimados", countDiscouragedStudents($students), [ "rgba(255,87,87,1)", "rgba(87,87,255,1)" ]);
+    $chart->add_dataset("# de alunos desanimados", $data, []);
 
-    $discouragedStudents->setDatasets($datasets);
-
-    return $discouragedStudents;
+    return $chart;
 
 }
 
-function countDiscouragedStudents( $students )
+function generateParameterImpactChart( $rules )
 {
-    $data = [ 0, 0 ];
+    $columns = mining_rule::get_mining_attributes();
+    $labels = [];
+    $data = [];
 
-    foreach ( $students as $student )
+    foreach ( $columns as $column )
     {
-        if ( count($student->matches) > 0 )
-        {
-            $data[0] ++;
-        }
-        else
-        {
-            $data[1] ++;
-        }
+        $data[] = countParameter($rules, $column);
+        $labels[] = get_string($column, "report_tecmides");
     }
 
-    return $data;
+    $chart = new chart("parameterImpact", "Impacto dos parâmetros", "Parâmetros utilizado para geração das previsões");
+    $chart->type = "horizontalBar";
+    $chart->labels = $labels;
+    $chart->add_dataset("# de regras em que está presente", $data, []);
+    $chart->add_style("width", "70%");
+    $chart->add_style("margin", "0 auto");
+
+    return $chart;
 
 }
 
-function getDiscouragedStudentsItems( $students )
+function countParameter( $rules, $parameter )
 {
-    $items = [];
+    $count = 0;
 
-    $max = 0;
-
-    foreach ( $students as $student )
+    foreach ( $rules as $rule )
     {
-        $max = count($student->matches) > $max ? count($student->matches) : $max;
-    }
-
-    if ( $max > 0 )
-    {
-        foreach ( $students as $student )
+        foreach ( $rule->antecedent as $antecedent )
         {
-            $coeficient = ((count($student->matches) / $max) * 100);
-
-            $items[] = [
-                "name" => $student->firstname . " " . $student->lastname,
-                "rules" => $student->matches,
-                "coeficient" => sprintf("%.2f %%", $coeficient),
-            ];
+            if ( strcmp($antecedent->name, $parameter) === 0 )
+            {
+                $count ++;
+            }
         }
 
-        usort($items, "cmpStudentCoeficient");
+        foreach ( $rule->consequent as $consequent )
+        {
+            if ( strcmp($consequent->name, $parameter) === 0 )
+            {
+                $count ++;
+            }
+        }
     }
 
-    return $items;
+    return $count;
 
 }
 
-function cmpStudentCoeficient( $a, $b )
+function generateStudentsList( analysis_for_students $analysis_students )
 {
-    return $b["coeficient"] - $a["coeficient"];
+    $analysis_students->calculate_coeficient();
+    $analysis_students->rank_by_coeficient();
+    $rankedStudents = $analysis_students->get_students();
+
+    $list = new itemlist("itemlist", get_string("discouragedstudentscomplete", "report_tecmides"));
+
+    $list->add_column("name", get_string("name"), "text");
+    $list->add_column("coeficient", get_string("coeficient", "report_tecmides"), "numeric");
+
+    foreach ( $rankedStudents as $student )
+    {
+        $list->add_item([ "name" => $student->firstname . " " . $student->lastname, "coeficient" => sprintf("%.2f", $student->coeficient) ]);
+    }
+
+    $list->add_style("width", "40%");
+    $list->add_style("float", "left");
+
+    return $list;
 
 }
 
 ?>
 
-<section id="tecmides-container"></section>
-
-<script type="text/javascript" src="asset/Chart.min.js"></script>
-<script type="text/javascript" src="asset/Tecmides.js"></script>
-
-<script type="text/javascript">
-    Tecmides.run(
-            document.getElementById("tecmides-container"),
-            <?= json_encode($charts) ?>,
-            <?= json_encode($discouragedStudentsList) ?>
-    );
-</script>
+<script type="text/javascript" src="asset/chart.min.js"></script>
+<script type="text/javascript" src="asset/palette.js"></script>
 
 <?php
 
-echo $OUTPUT->footer();
+echo $output->footer();

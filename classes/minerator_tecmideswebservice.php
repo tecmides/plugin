@@ -1,8 +1,8 @@
 <?php
 
-require_once(__DIR__ . "/Minerator.php");
+require_once(__DIR__ . "/minerator.php");
 
-class TecmidesWebserviceMinerator implements Minerator
+class minerator_tecmideswebservice implements minerator
 {
 
     private $client;
@@ -13,44 +13,29 @@ class TecmidesWebserviceMinerator implements Minerator
 
     }
 
-    public function generateRules( $data, $header )
+    public function generate_rules( $data, $header )
     {
-        $arffString = $this->generateARFF($data, $header);
+        $arffString = $this->generate_arff($data, $header);
 
-        return $this->convertJSON($this->client->generateRules($arffString));
+        return $this->parse_response($this->client->generateRules($arffString));
 
     }
 
-    private function generateARFF( $data, $header )
-    {
-        $strHeader = $this->convertToHeaderSection($header);
-        $strData = $this->convertToDataSection($data, $header);
-
-        return $strHeader . $strData;
-
-    }
-
-    private function convertToHeaderSection( $header )
+    private function generate_arff( $data, $header )
     {
         $strHeader = "@RELATION tecmides\n";
 
         foreach ( $header as $key => $item )
         {
-            $strHeader .= "@ATTRIBUTE {$key} {{$item}}\n";
+            $strHeader .= "@ATTRIBUTE {$key} {" . implode(",", $item) . "}\n";
         }
 
-        return $strHeader;
-
-    }
-
-    private function convertToDataSection( $data, $header )
-    {
         $strData = "@DATA\n";
 
         foreach ( $data as $item )
         {
             $info = [];
-            
+
             foreach ( array_keys($header) as $column )
             {
                 $info[] = $item->$column;
@@ -60,11 +45,11 @@ class TecmidesWebserviceMinerator implements Minerator
             $strData .= str_replace("-", "?", implode(",", $info)) . "\n";
         }
 
-        return $strData;
+        return $strHeader . $strData;
 
     }
 
-    private function convertJSON( $json )
+    private function parse_response( $json )
     {
         $mining = json_decode($json);
 
