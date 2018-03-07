@@ -1,17 +1,26 @@
 <?php
 
-require(__DIR__ . "/../../config.php");
-require(__DIR__ . "/lib.php");
-require(__DIR__ . "/constants.php");
-require(__DIR__ . "/classes/domain_activity.php");
-require(__DIR__ . "/classes/minerator_tecmideswebservice.php");
-require(__DIR__ . "/classes/mining_rule.php");
-require(__DIR__ . '/classes/analysis_for_students.php');
-require(__DIR__ . '/classes/output/chart.php');
-require(__DIR__ . '/classes/output/itemlist.php');
+require_once(__DIR__ . "/../../config.php");
+require_once(__DIR__ . "/lib.php");
+require_once(__DIR__ . "/constants.php");
+require_once(__DIR__ . "/classes/minerator/tecmideswebservice_minerator.php");
+require_once(__DIR__ . "/classes/mining/rule/assign_rule_mining.php");
+require_once(__DIR__ . "/classes/mining/rule/forum_rule_mining.php");
+require_once(__DIR__ . "/classes/mining/rule/resource_rule_mining.php");
+require_once(__DIR__ . '/classes/analysis_for_students.php');
+require_once(__DIR__ . "/classes/domain/activity.php");
+require_once(__DIR__ . "/classes/domain/profile.php");
+require_once(__DIR__ . '/classes/output/chart.php');
+require_once(__DIR__ . '/classes/output/itemlist.php');
 
-use \tecmides\output\chart;
-use \tecmides\output\itemlist;
+use tecmides\mining\rule\assign_rule_mining;
+use tecmides\mining\rule\forum_rule_mining;
+use tecmides\mining\rule\resource_rule_mining;
+use tecmides\domain\activity;
+use tecmides\domain\profile;
+use tecmides\output\chart;
+use tecmides\output\itemlist;
+use tecmides\minerator\tecmideswebservice_minerator;
 
 global $DB;
 
@@ -37,18 +46,86 @@ $output = $PAGE->get_renderer('report_tecmides');
 
 echo $output->header();
 
-domain_activity::import($course->id);
+activity::import($course->id);
 
-$tecmidesMinerator = new minerator_tecmideswebservice();
+$tecmidesMinerator = new tecmideswebservice_minerator();
 
-$mining = new mining_rule();
-$rules = $mining->get_rules($tecmidesMinerator);
-$students = $mining->get_matching_students($course->id, $rules);
+$rules = array_merge(
+    (new assign_rule_mining())->get_rules($tecmidesMinerator),
+    (new forum_rule_mining())->get_rules($tecmidesMinerator),
+    (new resource_rule_mining())->get_rules($tecmidesMinerator)
+);
+
+$students = get_matching_students($course->id, $rules);
 $analysis_students = new analysis_for_students($students);
 
 echo $output->render_dashboard(generateDiscouragedStudentsChart($analysis_students));
 echo $output->render_dashboard(generateStudentsList($analysis_students));
-echo $output->render_dashboard(generateParameterImpactChart($rules));
+
+function get_matching_students( $courseid, $rules )
+{
+    $students = get_students($courseid);
+
+    foreach ( $students as $student )
+    {
+        $student->matches = [];
+    }
+
+    foreach ( $rules as $rule )
+    {
+        $matchingStudents = query_rule($rule, $courseid);
+
+        foreach ( $matchingStudents as $userid )
+        {
+            $students[$userid]->matches[] = "{$rule}";
+        }
+    }
+
+    return $students;
+
+}
+
+function get_students( $courseid )
+{
+    global $DB;
+
+    $profiles = profile::find_all([ "courseid" => $courseid ]);
+
+    $users = [];
+
+    foreach ( $profiles as $profile )
+    {
+        $users[$profile->userid] = $DB->get_record("user", [ "id" => $profile->userid ]);
+    }
+
+    return $users;
+
+}
+
+function query_rule( $rule, $courseid )
+{
+    global $DB;
+
+    $antecedents = [];
+    $consequents = [];
+
+    foreach ( $rule->antecedent as $operand )
+    {
+        $antecedents[] = "{$operand->name}='{$operand->value}'";
+    }
+
+    foreach ( $rule->consequent as $operand )
+    {
+        $consequents[] = "{$operand->name}='{$operand->value}'";
+    }
+
+    $where = implode(" AND ", $antecedents) . " AND " . implode(" AND ", $consequents);
+
+    $sql = sprintf("SELECT i.userid FROM %s as i INNER JOIN %s as q ON i.courseid = q.courseid AND i.userid = q.userid WHERE i.courseid=? AND %s", ACTIVITY_TABLE, PROFILE_TABLE, $where);
+
+    return array_keys($DB->get_records_sql($sql, [ $courseid ]));
+
+}
 
 function generateDiscouragedStudentsChart( analysis_for_students $analysis_students )
 {
@@ -67,56 +144,6 @@ function generateDiscouragedStudentsChart( analysis_for_students $analysis_stude
     $chart->add_dataset("# de alunos desanimados", $data, []);
 
     return $chart;
-
-}
-
-function generateParameterImpactChart( $rules )
-{
-    $columns = mining_rule::get_mining_attributes();
-    $labels = [];
-    $data = [];
-
-    foreach ( $columns as $column )
-    {
-        $data[] = countParameter($rules, $column);
-        $labels[] = get_string($column, "report_tecmides");
-    }
-
-    $chart = new chart("parameterImpact", "Impacto dos parâmetros", "Parâmetros utilizado para geração das previsões");
-    $chart->type = "horizontalBar";
-    $chart->labels = $labels;
-    $chart->add_dataset("# de regras em que está presente", $data, []);
-    $chart->add_style("width", "70%");
-    $chart->add_style("margin", "0 auto");
-
-    return $chart;
-
-}
-
-function countParameter( $rules, $parameter )
-{
-    $count = 0;
-
-    foreach ( $rules as $rule )
-    {
-        foreach ( $rule->antecedent as $antecedent )
-        {
-            if ( strcmp($antecedent->name, $parameter) === 0 )
-            {
-                $count ++;
-            }
-        }
-
-        foreach ( $rule->consequent as $consequent )
-        {
-            if ( strcmp($consequent->name, $parameter) === 0 )
-            {
-                $count ++;
-            }
-        }
-    }
-
-    return $count;
 
 }
 

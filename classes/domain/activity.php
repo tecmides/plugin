@@ -1,11 +1,14 @@
 <?php
 
-require_once(__DIR__ . "/domain_base_active_record.php");
-require_once(__DIR__ . "/domain_profile.php");
-require_once(__DIR__ . '/../../../lib/gradelib.php');
-require_once(__DIR__ . '/../../../grade/querylib.php');
+namespace tecmides\domain;
 
-class domain_activity extends domain_base_active_record
+require_once(__DIR__ . '/../../../../lib/gradelib.php');
+require_once(__DIR__ . '/../../../../grade/querylib.php');
+
+require_once("base_active_record.php");
+require_once("profile.php");
+
+class activity extends base_active_record
 {
 
     public $id;
@@ -35,7 +38,7 @@ class domain_activity extends domain_base_active_record
 
     public static function import( $courseid )
     {
-        $profiles = domain_profile::find_all([ "courseid" => $courseid ]);
+        $profiles = profile::find_all([ "courseid" => $courseid ]);
 
         if ( count($profiles) <= 0 )
         {
@@ -149,11 +152,11 @@ class domain_activity extends domain_base_active_record
 
     private static function generate_from_counters( $courseid, $userid, $counters, $quartiles )
     {
-        $activity = domain_activity::find_one([ "courseid" => $courseid, "userid" => $userid ]);
+        $activity = activity::find_one([ "courseid" => $courseid, "userid" => $userid ]);
 
         if ( is_null($activity) )
         {
-            $activity = new domain_activity();
+            $activity = new activity();
         }
 
         $activity->courseid = $courseid;

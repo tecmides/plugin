@@ -1,8 +1,10 @@
 <?php
 
-require_once(__DIR__ . "/domain_active_record.php");
+namespace tecmides\domain;
 
-abstract class domain_base_active_record implements domain_active_record
+require_once("active_record.php");
+
+abstract class base_active_record implements active_record
 {
 
     private $__is_new_record = true;
@@ -72,7 +74,7 @@ abstract class domain_base_active_record implements domain_active_record
 
     private function to_stdClass()
     {
-        $data = new stdClass();
+        $data = new \stdClass();
         $attributes = static::get_attributes();
 
         foreach ( $attributes as $attribute )

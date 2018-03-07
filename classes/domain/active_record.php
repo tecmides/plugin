@@ -1,6 +1,8 @@
 <?php
 
-interface domain_active_record
+namespace tecmides\domain;
+
+interface active_record
 {
 
     public static function get_table_name();

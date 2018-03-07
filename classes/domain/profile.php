@@ -1,6 +1,8 @@
 <?php
 
-class domain_profile extends domain_base_active_record
+namespace tecmides\domain;
+
+class profile extends base_active_record
 {
 
     public $id;
