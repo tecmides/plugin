@@ -2,22 +2,25 @@
 
 namespace tecmides\mining\rule;
 
-require_once("base_rule_mining.php");
+require_once(__DIR__ . "/base_rule_mining.php");
+require_once(__DIR__ . "/base_rule_mining_step.php");
 require_once(__DIR__ . "/../../minerator/minerator.php");
 
 class forum_rule_mining extends base_rule_mining
 {
 
-    public function get_rules( \tecmides\minerator\minerator $minerator )
+    public function get_rules( \tecmides\minerator\minerator $minerator, $numRules )
     {
-        $header = $this->get_mining_data_header();
-        $attr = array_keys($header);
-
-        $rules = $minerator->generate_rules($this->get_mining_data(), $header, array_search("st_group_assign_ltsubmit", $attr), 20);
+        $rules = (new forum_rule_mining_step1())->get_rules($minerator, $numRules);
         
         return $this->filter($rules);
 
     }
+
+}
+
+class forum_rule_mining_step1 extends base_rule_mining_step
+{
 
     protected function get_mining_attributes()
     {
@@ -36,19 +39,9 @@ class forum_rule_mining extends base_rule_mining
 
     }
 
-    protected function get_mining_data_header()
+    protected function get_class_attribute()
     {
-        $default = parent::get_mining_data_header();
-
-        $miningAttributes = $this->get_mining_attributes();
-        $header = [];
-
-        foreach ( $miningAttributes as $attr )
-        {
-            $header[$attr] = $default[$attr];
-        }
-
-        return $header;
+        return "st_group_assign_ltsubmit";
 
     }
 

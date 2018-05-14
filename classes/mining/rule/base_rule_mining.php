@@ -2,34 +2,10 @@
 
 namespace tecmides\mining\rule;
 
-require_once("module_rule_mining.php");
+require_once(__DIR__ . "/module_rule_mining.php");
 
 abstract class base_rule_mining implements module_rule_mining
 {
-
-    protected function get_mining_data()
-    {
-        global $DB;
-
-        $sql = sprintf("SELECT i.userid, %s FROM %s as i INNER JOIN %s as q ON i.courseid = q.courseid AND i.userid = q.userid", implode(",", $this->get_mining_attributes()), ACTIVITY_TABLE, PROFILE_TABLE);
-
-        $data = $DB->get_records_sql($sql);
-
-        return array_values($data);
-
-    }
-
-    protected function get_mining_data_header()
-    {
-        return include(__DIR__ . "/../mining_attributes.php");
-
-    }
-
-    protected function get_mining_attributes()
-    {
-        return array_keys($this->get_mining_data_header());
-
-    }
 
     protected function filter( $rules )
     {
@@ -38,6 +14,22 @@ abstract class base_rule_mining implements module_rule_mining
 
         foreach ( $rules as $rule )
         {
+            $hasDicouragedAntecedent = false;
+            
+            foreach ( $rule->antecedent as $antecedent )
+            {
+                if ( in_array($antecedent->name, $operators) && $antecedent->value == MINDSTATE_DISCOURAGED )
+                {
+                    $filteredRules[] = $rule;
+                    $hasDicouragedAntecedent = true;
+                }
+            }
+            
+            if( $hasDicouragedAntecedent )
+            {
+               continue;
+            }
+            
             foreach ( $rule->consequent as $consequent )
             {
                 if ( in_array($consequent->name, $operators) && $consequent->value == MINDSTATE_DISCOURAGED )

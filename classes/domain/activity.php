@@ -5,8 +5,8 @@ namespace tecmides\domain;
 require_once(__DIR__ . '/../../../../lib/gradelib.php');
 require_once(__DIR__ . '/../../../../grade/querylib.php');
 
-require_once("base_active_record.php");
-require_once("profile.php");
+require_once(__DIR__ . "/base_active_record.php");
+require_once(__DIR__ . "/profile.php");
 
 class activity extends base_active_record
 {

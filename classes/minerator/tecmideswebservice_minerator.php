@@ -2,9 +2,9 @@
 
 namespace tecmides\minerator;
 
-require_once("minerator.php");
-require_once("/../mining/rule/domain/rule.php");
-require_once("/../mining/rule/domain/operand.php");
+require_once(__DIR__ . "/minerator.php");
+require_once(__DIR__ . "/../mining/rule/domain/rule.php");
+require_once(__DIR__ . "/../mining/rule/domain/operand.php");
 
 class tecmideswebservice_minerator implements minerator
 {
@@ -40,6 +40,10 @@ class tecmideswebservice_minerator implements minerator
         $response = $this->client->generateRulesByAttrRelativity($parameters);
         $rules = property_exists($response, "return") ? $response->return : array();
 
+        if(!is_array($rules)) {
+            $rules = [$rules];
+        }
+
         return $this->normalize_response($rules);
 
     }
@@ -57,6 +61,10 @@ class tecmideswebservice_minerator implements minerator
         $response = $this->client->generateRules($parameters);
 
         $rules = property_exists($response, "return") ? $response->return : array();
+
+        if(!is_array($rules)) {
+            $rules = [$rules];
+        }
 
         return $this->normalize_response($rules);
 

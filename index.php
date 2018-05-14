@@ -51,9 +51,9 @@ activity::import($course->id);
 $tecmidesMinerator = new tecmideswebservice_minerator();
 
 $rules = array_merge(
-    (new assign_rule_mining())->get_rules($tecmidesMinerator),
-    (new forum_rule_mining())->get_rules($tecmidesMinerator),
-    (new resource_rule_mining())->get_rules($tecmidesMinerator)
+    (new assign_rule_mining())->get_rules($tecmidesMinerator, 10),
+    (new forum_rule_mining())->get_rules($tecmidesMinerator, 20),
+    (new resource_rule_mining())->get_rules($tecmidesMinerator, 20)
 );
 
 $students = get_matching_students($course->id, $rules);

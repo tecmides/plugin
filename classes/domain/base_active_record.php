@@ -2,7 +2,7 @@
 
 namespace tecmides\domain;
 
-require_once("active_record.php");
+require_once(__DIR__ . "/active_record.php");
 
 abstract class base_active_record implements active_record
 {
