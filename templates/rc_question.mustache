@@ -1,0 +1,13 @@
+<div id="{{ id }}" class="dashboard rc-question" style="{{ inlineStyle }}">
+    <div class="content">
+        <h3 class="dashboard-title">{{ title }}</h3>
+        <h6 class="dashboard-subtitle">{{ subtitle }}</h6>
+
+        {{# options }}
+            <p class="center">
+                <input  type="radio" id="{{ inputName }}{{ value }}" name="{{ inputName }}" value="{{ value }}" required/>
+                <label for="{{ inputName }}{{ value }}">{{ label }}</label>
+            </p>
+        {{/ options }}
+    </div>
+</div>

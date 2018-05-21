@@ -1,23 +1,25 @@
 <div id="{{ id }}" class="dashboard" style="{{ inlineStyle }}">
-    <h3 class="dashboard-title">{{ title }}</h3>
-    <h6 class="dashboard-subtitle">{{ subtitle }}</h6>
-    
-    <table>
-        <thead>
-            <tr>
-                {{# columns }}
-                    <th class="item-{{ type }}">{{ name }}</th>
-                {{/ columns }}
-            </tr>
-        </thead>
-        <tbody>
-            {{# items }}
+    <div class="content">
+        <h3 class="dashboard-title">{{ title }}</h3>
+        <h6 class="dashboard-subtitle">{{ subtitle }}</h6>
+
+        <table>
+            <thead>
                 <tr>
-                    {{# . }}
-                        <td class="item-{{ type }}">{{ value }}</td>
-                    {{/ . }}
+                    {{# columns }}
+                        <th class="item-{{ type }}">{{ name }}</th>
+                    {{/ columns }}
                 </tr>
-            {{/ items }}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {{# items }}
+                    <tr>
+                        {{# . }}
+                            <td class="item-{{ type }}">{{ value }}</td>
+                        {{/ . }}
+                    </tr>
+                {{/ items }}
+            </tbody>
+        </table>
+    </div>
 </div>

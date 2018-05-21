@@ -57,3 +57,19 @@ $string['quartile3'] = "High";
 
 // Errors
 $string['soaperror'] = "Error when trying to connect with the mining server. Please, try again later.";
+
+// Questionary
+$string["questionaryname"] = "Questionary about you mindstate";
+$string["questionheader"] = "Question";
+$string["question1"] = "How do you feel when you send individual activities late?";
+$string["question2"] = "How do you feel when you send group activities late?";
+$string["question3"] = "How do you feel when you have difficulty with some content?";
+$string["question4"] = "With regard to the INDIVIDUAL activities proposed by Moodle: Do you send them late?";
+$string["question5"] = "Regarding the GROUP activities proposed by Moodle: Do you send them late?";
+$string["question6"] = "With respect to the content of the course: Can you follow all the contents?";
+$string["question7"] = "Regarding the content of the course: Have you had any difficulties with any content?";
+$string["acceptterms"] = "I agree to contribute my information anonymously for use in research";
+$string["message_questionarysaved"] = "Questionary information saved!";
+$string["message_questionaryerror"] = "Error saving questionary information!";
+$string["message_needtobestudent"] = "You need to be a course student to be able to answer the questionnaire!";
+$string["message_needtobeteacher"] = "You do not have enough permissions!";

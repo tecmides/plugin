@@ -46,21 +46,28 @@ $output = $PAGE->get_renderer('report_tecmides');
 
 echo $output->header();
 
-activity::import($course->id);
+$hasPermissions = has_capability ('moodle/course:update', $context);
 
-$tecmidesMinerator = new tecmideswebservice_minerator();
+if($hasPermissions) {
+    activity::import($course->id);
 
-$rules = array_merge(
-    (new assign_rule_mining())->get_rules($tecmidesMinerator, 10),
-    (new forum_rule_mining())->get_rules($tecmidesMinerator, 20),
-    (new resource_rule_mining())->get_rules($tecmidesMinerator, 20)
-);
+    $tecmidesMinerator = new tecmideswebservice_minerator();
 
-$students = get_matching_students($course->id, $rules);
-$analysis_students = new analysis_for_students($students);
+    $rules = array_merge(
+        (new assign_rule_mining())->get_rules($tecmidesMinerator, 10),
+        (new forum_rule_mining())->get_rules($tecmidesMinerator, 20),
+        (new resource_rule_mining())->get_rules($tecmidesMinerator, 20)
+    );
 
-echo $output->render_dashboard(generateDiscouragedStudentsChart($analysis_students));
-echo $output->render_dashboard(generateStudentsList($analysis_students));
+    $students = get_matching_students($course->id, $rules);
+    $analysis_students = new analysis_for_students($students);
+
+    echo $output->render_dashboard(generateDiscouragedStudentsChart($analysis_students));
+    echo $output->render_dashboard(generateStudentsList($analysis_students));
+}
+else {
+    \core\notification::error(get_string("message_needtobeteacher", "report_tecmides"));
+}
 
 function get_matching_students( $courseid, $rules )
 {

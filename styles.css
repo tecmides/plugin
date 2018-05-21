@@ -1,15 +1,21 @@
 .dashboard {
-    display: block;
     padding: 20px;
-    min-width: 500px;
     height: 500px;
     box-sizing: border-box;
     overflow: auto;
     margin-bottom: 20px;
+    border: 1px solid #d3d3d3;
+    border-radius: 2px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
 }
 
-.dashboard * {
-    box-sizing: border-box;
+.dashboard .content {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
 }
 
 .dashboard-title {
@@ -76,4 +82,154 @@
 
 .dashboard .item-numeric {
     text-align: right;
+}
+
+button.center {
+    display: block;
+    margin: 0 auto;
+}
+
+p.center {
+    text-align: center;
+}
+
+/* For the questionary */
+.gew {
+    width: 400px;
+    height: 400px;
+    position: relative;
+    display: block;
+    margin: 0 auto;
+}
+
+.gew * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.gew label {
+    cursor: pointer;
+}
+
+.gew input[type="radio"] {
+    opacity: 0;
+    margin: 0;
+    margin-left: -13px;
+    position: relative;
+    padding: 0;
+
+    border: none;
+    border-radius: 200%;
+    outline: none;
+    cursor: pointer;
+
+    font-size: 0.7em;
+    vertical-align: middle;
+}
+
+.gew p {
+    display: inline-block;
+    position: absolute;
+    top: -50%;
+    left: 25%;
+    margin: 0;
+    padding: 0;
+
+    font-weight: bold;
+    font-size: 0.75em;
+}
+
+.gew .gew-emotion:before {
+    content: " ";
+    display: inline-block;
+
+    height: 100%;
+
+    vertical-align: middle;
+}
+
+.gew .gew-emotion {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 0;
+    overflow: visible;
+
+    height: 7.5%;
+
+    text-align: center;
+    white-space: nowrap;
+}
+
+.gew .gew-emotion > label {
+    content: '';
+    display: inline-block;
+    position: relative;
+    margin: 0 1%;
+    padding: 0;
+
+    border-radius: 100%;
+    border-width: 0.2em;
+    border-style: solid;
+    cursor: pointer;
+    -webkit-transition: background-color 0.5s, transform 0.2s;
+    -o-transition: background-color 0.5s, transform 0.2s;
+    transition: background-color 0.5s, transform 0.2s;
+
+    vertical-align: middle;
+}
+
+.gew .gew-emotion > label:hover {
+    -webkit-transform: scale(1.1);
+    -o-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+.gew .gew-neutral {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -12%;
+    margin-left: -12%;
+
+    width: 24%;
+    height: 24%;
+
+    border-radius: 200%;
+
+    text-align: center;
+}
+
+.gew .gew-neutral label::before {
+    content: "";
+    display: inline-block;
+
+    height: 100%;
+
+    vertical-align: middle;
+}
+
+.gew .gew-neutral label {
+    display: inline-block;
+    margin: 3% auto;
+
+    width: 90%;
+    height: 44%;
+
+    border: 0.2em dashed black;
+    border-radius: 0 0 100% 100%;
+
+    font-weight: bolder;
+    font-size: 0.75em;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.gew .gew-neutral label:nth-child(2) {
+    border-radius: 100% 100% 0 0;
+}
+
+.gew .gew-neutral label.gew-selected {
+    border-style: solid;
 }

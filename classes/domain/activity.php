@@ -201,4 +201,16 @@ class activity extends base_active_record
 
     }
 
+    public static function get_labels()
+    {
+        return [
+            "grade" => get_string("grade", "report_tecmides"),
+            "q_assign_view"  => get_string("q_assign_view", "report_tecmides"),
+            "q_assign_submit" => get_string("q_assign_submit", "report_tecmides"),
+            "q_forum_create" => get_string("q_forum_create", "report_tecmides"),
+            "q_forum_group_access" => get_string("q_group_access", "report_tecmides"),
+            "q_forum_discussion_access" => get_string("q_forum_discussion_access", "report_tecmides"),
+            "q_resource_view" => get_string("q_resource_view", "report_tecmides")
+        ];
+    }
 }

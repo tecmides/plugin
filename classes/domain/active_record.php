@@ -11,6 +11,8 @@ interface active_record
 
     public static function get_attributes();
 
+    public static function get_labels();
+
     public static function find_one( $conditions );
 
     public static function find_all( $conditions );
