@@ -4,6 +4,7 @@ class analysis_for_students
 {
 
     private $students;
+    private $numStudents;
 
     public function __construct( $students )
     {

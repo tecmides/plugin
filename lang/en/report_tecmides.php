@@ -44,8 +44,8 @@ $string['recurrence4'] = "Always";
 // Mindstates
 $string['mindstate0'] = "Satisfied";
 $string['mindstate1'] = "Dissatisfied";
-$string['mindstate2'] = "Animated";
-$string['mindstate3'] = "Discouraged";
+$string['mindstate2'] = "Discouraged";
+$string['mindstate3'] = "Animated";
 $string['mindstate4'] = "Other";
 $string['mindstate5'] = "None";
 
