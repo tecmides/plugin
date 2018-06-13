@@ -16,7 +16,7 @@ $string["discouragedstudents"] = "Alunos desanimados";
 $string["notdiscouragedstudents"] = "Alunos não-desanimados";
 $string["discouragedstudentscomplete"] = "Alunos com potencial desânimo no curso";
 $string["emptydiscouragedlistmessage"] = "Não há alunos com potencial desânimo no curso";
-$string["coeficient"] = "Coef. de desânimo [%]";
+$string["coeficient"] = "Potencial desânimo [%]";
 
 // Fields
 $string["grade"] = "Nota";

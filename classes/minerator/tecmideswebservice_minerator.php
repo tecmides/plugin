@@ -27,14 +27,16 @@ class tecmideswebservice_minerator implements minerator
 
     }
     
-    public function generate_rules_by_attr_relativity( $data, $header, $idxClassAttr, $numRules )
+    public function generate_rules_by_attr_relativity( $data, $header, $idxClassAttr, $numRules, $minSupport, $minConfidence )
     {
         $arffString = $this->generate_arff($data, $header);
 
         $parameters = array(
             "arg0" => $arffString,
             "arg1" => $idxClassAttr,
-            "arg2" => $numRules
+            "arg2" => $numRules,
+            "arg3" => $minSupport,
+            "arg4" => $minConfidence
         );
 
         $response = $this->client->generateRulesByAttrRelativity($parameters);
@@ -48,14 +50,15 @@ class tecmideswebservice_minerator implements minerator
 
     }
 
-    public function generate_rules( $data, $header, $idxClassAttr, $numRules )
+    public function generate_rules( $data, $header, $numRules, $minSupport, $minConfidence )
     {
         $arffString = $this->generate_arff($data, $header);
 
         $parameters = array(
             "arg0" => $arffString,
-            "arg1" => $idxClassAttr,
-            "arg2" => $numRules
+            "arg1" => $numRules,
+            "arg2" => $minSupport,
+            "arg3" => $minConfidence
         );
 
         $response = $this->client->generateRules($parameters);

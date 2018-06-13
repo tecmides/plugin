@@ -6,12 +6,22 @@ require_once(__DIR__ . "/base_rule_mining.php");
 
 abstract class base_rule_mining_step extends base_rule_mining
 {
-    public function get_rules( \tecmides\minerator\minerator $minerator, $numRules )
+    public function get_rules( \tecmides\minerator\minerator $minerator, $numRules, $minSupport, $minConfidence )
+    {
+        $header = $this->get_mining_data_header();
+
+        $rules = $minerator->generate_rules($this->get_mining_data(), $header, $numRules, $minSupport, $minConfidence);
+
+        return $this->filter($rules);
+
+    }
+
+    public function get_rules_by_attr_relativity( \tecmides\minerator\minerator $minerator, $numRules, $minSupport, $minConfidence )
     {
         $header = $this->get_mining_data_header();
         $attr = array_keys($header);
 
-        $rules = $minerator->generate_rules($this->get_mining_data(), $header, array_search($this->get_class_attribute(), $attr), $numRules);
+        $rules = $minerator->generate_rules_by_attr_relativity($this->get_mining_data(), $header, array_search($this->get_class_attribute(), $attr), $numRules, $minSupport, $minConfidence);
 
         return $this->filter($rules);
 

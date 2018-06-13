@@ -62,8 +62,10 @@ if($hasPermissions) {
     $students = get_matching_students($course->id, $rules);
     $analysis_students = new analysis_for_students($students);
 
+    echo "<div class='main-container'>";
     echo $output->render_dashboard(generateDiscouragedStudentsChart($analysis_students));
     echo $output->render_dashboard(generateStudentsList($analysis_students));
+    echo "</div>";
 }
 else {
     \core\notification::error(get_string("message_needtobeteacher", "report_tecmides"));
@@ -148,7 +150,7 @@ function generateDiscouragedStudentsChart( analysis_for_students $analysis_stude
     $chart->add_style("width", "60%");
     $chart->add_style("float", "left");
 
-    $chart->add_dataset("# de alunos desanimados", $data, []);
+    $chart->add_dataset("# de alunos desanimados", $data, ["#f44336", "#a5d6a7"]);
 
     return $chart;
 

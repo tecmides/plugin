@@ -9,9 +9,9 @@ require_once(__DIR__ . "/../../minerator/minerator.php");
 class forum_rule_mining extends base_rule_mining
 {
 
-    public function get_rules( \tecmides\minerator\minerator $minerator, $numRules )
+    public function get_rules( \tecmides\minerator\minerator $minerator, $numRules, $minSupport = 0.2, $minConfidence = 0.7 )
     {
-        $rules = (new forum_rule_mining_step1())->get_rules($minerator, $numRules);
+        $rules = (new forum_rule_mining_step1())->get_rules($minerator, $numRules, $minSupport, $minConfidence);
         
         return $this->filter($rules);
 
@@ -41,7 +41,7 @@ class forum_rule_mining_step1 extends base_rule_mining_step
 
     protected function get_class_attribute()
     {
-        return "st_group_assign_ltsubmit";
+        return "";
 
     }
 
