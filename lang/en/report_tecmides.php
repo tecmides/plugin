@@ -17,6 +17,10 @@ $string['notdiscouragedstudents'] = "Not-discouraged students";
 $string['discouragedstudentscomplete'] = "Potentially discouraged students";
 $string['emptydiscouragedlistmessage'] = "There are no pottentialy discouraged stufents";
 $string['coeficient'] = "Discouraged coef. [%]";
+$string['approvedstudentscharttitle'] = "Potentially approved students";
+$string['approvedstudentschartdescription'] = "Approved students prevision";
+$string['notapprovedstudents'] = "Not approved students";
+$string['approvedstudents'] = "Approved students";
 
 // Fields
 $string["grade"] = "Grade";
@@ -73,3 +77,14 @@ $string["message_questionarysaved"] = "Questionary information saved!";
 $string["message_questionaryerror"] = "Error saving questionary information!";
 $string["message_needtobestudent"] = "You need to be a course student to be able to answer the questionnaire!";
 $string["message_needtobeteacher"] = "You do not have enough permissions!";
+$string["message_servernotfound"] = "The server is not running or the plugin is not properly configured. Try again later. If this problem persists, please contact the administrator of this Moodle.";
+
+// Settings
+$string["TecmidesSendTrainingData"] = "Send the training set";
+$string["TecmidesSendTrainingData_description"] = "Check to send the students training data in the first access of this report";
+$string["TecmidesWebserviceURL"] = "Server URL";
+$string["TecmidesWebserviceURL_description"] = "URL from the Tecmides server where the models are stored";
+$string["TecmidesModel"] = "Applied model";
+$string["TecmidesModel_description"] = "Tecmides server model to classify the students";
+$string["rule_model_name"] = "Association rules";
+$string["tree_model_name"] = "Decision trees";

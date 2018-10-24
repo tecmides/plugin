@@ -1,11 +1,16 @@
 <?php
 
+require_once(__DIR__ . "/../../config.php");
+
 global $CFG;
 
 define("LOG_TABLE", "{$CFG->prefix}logstore_standard_log");
 define("USER_TABLE", "{$CFG->prefix}user");
 define("ACTIVITY_TABLE", "{$CFG->prefix}tecmides_activity");
 define("PROFILE_TABLE", "{$CFG->prefix}tecmides_profile");
+
+define("RULE_MODEL_CONFIG", "rule_model");
+define("TREE_MODEL_CONFIG", "tree_model");
 
 define("QUARTILE_LOW", 0);
 define("QUARTILE_MEDIUM", 1);

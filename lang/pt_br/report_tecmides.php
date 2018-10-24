@@ -17,6 +17,10 @@ $string["notdiscouragedstudents"] = "Alunos não-desanimados";
 $string["discouragedstudentscomplete"] = "Alunos com potencial desânimo no curso";
 $string["emptydiscouragedlistmessage"] = "Não há alunos com potencial desânimo no curso";
 $string["coeficient"] = "Potencial desânimo [%]";
+$string["approvedstudentscharttitle"] = "Estudantes potencialmente aprovados";
+$string["approvedstudentschartdescription"] = "Previsão de estudantes aprovados";
+$string["notapprovedstudents"] = "Estudantes não aprovados";
+$string["approvedstudents"] = "Estudantes aprovados";
 
 // Fields
 $string["grade"] = "Nota";
@@ -55,9 +59,6 @@ $string["quartile1"] = "Médio";
 $string["quartile2"] = "Médio-alto";
 $string["quartile3"] = "Alto";
 
-// Errors
-$string["soaperror"] = "Erro ao se conectar ao servidor de mineração. Por favor, tente novamente mais tarde.";
-
 // Questionary
 $string["questionaryname"] = "Questionário sobre o estado de ânimo";
 $string["questionheader"] = "Questão";
@@ -73,3 +74,14 @@ $string["message_questionarysaved"] = "Informações do questionário salvas!";
 $string["message_questionaryerror"] = "Erro ao salvar as informações do questionário!";
 $string["message_needtobestudent"] = "Você precisa ser estudante do curso para poder responder ao questionário!";
 $string["message_needtobeteacher"] = "Você não tem permissão suficiente para visualizar esse conteúdo!";
+$string["message_servernotfound"] = "O servidor não está rodando ou o plugin não está devidamente configurado. Tente novamente mais tarde. Se o problema persistir, por favor contate o administrador dessa instalação Moodle.";
+
+// Settings
+$string["TecmidesSendTrainingData"] = "Enviar dados de treinamento";
+$string["TecmidesSendTrainingData_description"] = "Marque para enviar dados dos alunos para treinamento do modelo no primeiro acesso ao relatório";
+$string["TecmidesWebserviceURL"] = "URL do servidor";
+$string["TecmidesWebserviceURL_description"] = "URL do servidor Tecmides que contém modelos";
+$string["TecmidesModel"] = "Modelo a ser aplicado";
+$string["TecmidesModel_description"] = "Modelo do servidor a ser usado para classificar os alunos";
+$string["rule_model_name"] = "Regras de associação";
+$string["tree_model_name"] = "Árvore de decisão";
